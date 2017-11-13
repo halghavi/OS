@@ -3,23 +3,19 @@
 #include <sys/time.h>
 #include <stdio.h>
 #include <errno.h>
+#include <time.h>
 
-int main(int argc, char *argv[])
-{
-    struct timeval now;
-    int rc;
+int main(int argc, char *argv[]) {
+	struct timeval now;
+	if (gettimeofday(&now, NULL) == -1)
+		return 1;
+	struct tm *timeinfo;
 
-    rc=gettimeofday(&now, NULL);
-    if(rc==0) {
-        printf("gettimeofday() successful.\n");
-        printf("time = %u.%06u\n",
-                now.tv_sec, now.tv_usec);
-    }
-    else {
-        printf("gettimeofday() failed, errno = %d\n",
-                errno);
-        return -1;
-    }
+	timeinfo = localtime((const time_t *) &now);
 
-    return 0;
+	char time[100];
+
+	strftime(time, 100, "Current Date & time is: %c", timeinfo);
+	printf("%s\n", time);
+	return 0;
 }
